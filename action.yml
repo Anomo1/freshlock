@@ -1,0 +1,41 @@
+name: "Freshlock"
+description: "Fail CI when vendored data files go stale, and refresh them from upstream so a PR action can open a review"
+author: "Anomo"
+branding:
+  icon: "refresh-cw"
+  color: "green"
+
+inputs:
+  mode:
+    description: '"check" fails on stale/modified/missing data; "update" re-fetches upstream and applies changes to the working tree'
+    required: false
+    default: "check"
+  strict:
+    description: "In check mode, also fail when upstream has drifted from the vendored copy"
+    required: false
+    default: "false"
+  working-directory:
+    description: "Directory containing data.lock"
+    required: false
+    default: "."
+  version:
+    description: "freshlock npm version to run"
+    required: false
+    default: "latest"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run freshlock
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ "${{ inputs.mode }}" = "update" ]; then
+          npx --yes freshlock@${{ inputs.version }} update
+        else
+          if [ "${{ inputs.strict }}" = "true" ]; then
+            npx --yes freshlock@${{ inputs.version }} check --strict
+          else
+            npx --yes freshlock@${{ inputs.version }} check
+          fi
+        fi

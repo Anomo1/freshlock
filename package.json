@@ -1,0 +1,39 @@
+{
+  "name": "freshlock",
+  "version": "0.1.0",
+  "description": "Dependabot for the data files in your repo. Lock vendored datasets to their upstream source with an integrity hash and a freshness contract.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "freshlock": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "action.yml"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "data",
+    "lockfile",
+    "dependabot",
+    "vendored-data",
+    "freshness",
+    "ci",
+    "github-actions",
+    "dataset",
+    "provenance"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.0"
+  }
+}
