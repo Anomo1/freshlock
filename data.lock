@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "datasets": {
+    "examples/data/countries.json": {
+      "source": "https://raw.githubusercontent.com/mledoze/countries/master/countries.json",
+      "integrity": "sha256-2bb85e31584178878e92b7f652504fe88dfed5cf7574dd1b8c90b09ac5346d37",
+      "fetchedAt": "2026-07-08T20:10:39.321Z",
+      "maxAge": "30d",
+      "normalize": "json"
+    }
+  }
+}
