@@ -51,7 +51,7 @@ Drift detection normalizes before hashing (sorted JSON keys, normalized CSV line
 Fail CI when data breaks its contract:
 
 ```yaml
-- uses: anomo/freshlock@v1        # mode: check (default)
+- uses: Anomo1/freshlock@v1        # mode: check (default)
 ```
 
 Open a Dependabot-style PR when upstream data changes (pair with any PR action):
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: anomo/freshlock@v1
+      - uses: Anomo1/freshlock@v1
         with:
           mode: update
       - uses: peter-evans/create-pull-request@v6
