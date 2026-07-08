@@ -1,4 +1,4 @@
-name: "Freshlock"
+name: "Freshlock Data Check"
 description: "Fail CI when vendored data files go stale, and refresh them from upstream so a PR action can open a review"
 author: "Anomo"
 branding:
