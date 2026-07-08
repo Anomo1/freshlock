@@ -43,11 +43,22 @@ export async function check(dir: string, options: CheckOptions): Promise<number>
   for (const [file, entry] of Object.entries(lock.datasets)) {
     const normalize = entry.normalize ?? detectNormalize(file);
     const localPath = join(dir, file);
-    const localHash = existsSync(localPath) ? hashContent(readFileSync(localPath), normalize) : null;
+
+    let localHash: string | null = null;
+    let corruptError: string | undefined;
+    if (existsSync(localPath)) {
+      try {
+        localHash = hashContent(readFileSync(localPath), normalize);
+      } catch (err) {
+        // Unparseable content (e.g. hand-edited JSON) never matches the lock — treat as modified.
+        localHash = "";
+        corruptError = err instanceof Error ? err.message : String(err);
+      }
+    }
 
     let upstreamHash: string | null | undefined = undefined;
     let detail: string | undefined;
-    if (!options.offline && localHash !== null) {
+    if (!options.offline && localHash !== null && !corruptError) {
       try {
         upstreamHash = hashContent(await fetchSource(entry.source), normalize);
       } catch (err) {
@@ -66,7 +77,11 @@ export async function check(dir: string, options: CheckOptions): Promise<number>
     });
     if (status === "drift") detail = "upstream changed — run: freshlock update";
     if (status === "stale") detail = `older than max-age ${entry.maxAge} — run: freshlock update`;
-    if (status === "modified") detail = "local file no longer matches data.lock integrity";
+    if (status === "modified") {
+      detail = corruptError
+        ? `not valid ${normalize}: ${corruptError} — run: freshlock update`
+        : "local file no longer matches data.lock integrity";
+    }
 
     results.push({ file, status, ageDays: ageInDays(entry.fetchedAt, now), maxAge: entry.maxAge, detail });
   }

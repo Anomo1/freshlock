@@ -1,6 +1,6 @@
 {
   "name": "freshlock",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Dependabot for the data files in your repo. Lock vendored datasets to their upstream source with an integrity hash and a freshness contract.",
   "license": "MIT",
   "type": "module",

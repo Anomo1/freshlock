@@ -31,13 +31,21 @@ export async function update(dir: string, files: string[]): Promise<number> {
       const upstreamHash = hashContent(upstream, normalize);
       const localPath = join(dir, file);
       const old = existsSync(localPath) ? readFileSync(localPath) : null;
-      const localHash = old === null ? null : hashContent(old, normalize);
+      let localHash: string | null;
+      let corrupt = false;
+      try {
+        localHash = old === null ? null : hashContent(old, normalize);
+      } catch {
+        // Unparseable local content (e.g. hand-edited JSON) always needs restoring.
+        localHash = "";
+        corrupt = true;
+      }
       if (upstreamHash !== entry.integrity) {
         writeFileSync(localPath, upstream);
         console.log(`↑ ${file}: ${summarizeDiff(old ?? Buffer.alloc(0), upstream, normalize)}`);
       } else if (localHash !== upstreamHash) {
         writeFileSync(localPath, upstream);
-        console.log(`✓ ${file}: restored from upstream (local copy was ${old === null ? "missing" : "modified"})`);
+        console.log(`✓ ${file}: restored from upstream (local copy was ${old === null ? "missing" : corrupt ? "corrupt" : "modified"})`);
       } else {
         console.log(`✓ ${file}: unchanged upstream, contract renewed`);
       }
